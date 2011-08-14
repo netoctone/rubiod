@@ -1,6 +1,7 @@
 module Rubiod
 
   class Worksheet
+
     def initialize spreadsheet, x_table
       @spreadsheet = spreadsheet
       @x_table = x_table
@@ -8,8 +9,7 @@ module Rubiod
       @row_refs = GappedNumHash.new
       this = self
       cur_index = 0
-      @x_table.find('//table:table-row').each do |x_row|
-        p x_row
+      @x_table.children.select{ |n| n.name == 'table-row' }.each do |x_row|
         if rep = x_row['number-rows-repeated']
           rep = rep.to_i
           @row_refs.insert cur_index..cur_index+rep-1, Row.new(this, x_row)
@@ -31,6 +31,10 @@ module Rubiod
 
     def []= row, col, val
     end
+
+    def insert row_ind
+    end
+
   end
 
 end

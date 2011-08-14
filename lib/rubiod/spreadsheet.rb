@@ -10,7 +10,7 @@ module Rubiod
       end
 
       x_spread = @x_content.find_first "//office:spreadsheet"
-      x_tabs_with_index = x_spread.find("//table:table").each_with_index
+      x_tabs_with_index = x_spread.children.each_with_index
       this = self
       @worksheets = x_tabs_with_index.inject({}) do |wss, (x_tab, i)|
         ws = Worksheet.new(this, x_tab)
