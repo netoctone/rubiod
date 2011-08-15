@@ -1,36 +1,41 @@
-class Rubiod::Row
+module Rubiod
 
-  def initialize worksheet, x_row
-    @worksheet = worksheet
-    @x_row = x_row
+  class Row
 
-    @x_cell_refs = GappedNumHash.new
-    cur_index = 0
-    @x_row.children.each do |x_cell|
-      if rep = x_cell['number-columns-repeated']
-        rep = rep.to_i
-        @x_cell_refs.insert cur_index..cur_index+rep-1, x_cell
-        cur_index += rep
-      else
-        @x_cell_refs.insert cur_index, x_cell
-        cur_index += 1
+    def initialize worksheet, x_row
+      @worksheet = worksheet
+      @x_row = x_row
+
+      @cell_refs = GappedNumHash.new
+      this = self
+      cur_index = 0
+      @x_row.children.each do |x_cell|
+        if rep = x_cell['number-columns-repeated']
+          rep = rep.to_i
+          @cell_refs.insert cur_index..cur_index+rep-1, Cell.new(this, x_cell)
+          cur_index += rep
+        else
+          @cell_refs.insert cur_index, Cell.new(this, x_cell)
+          cur_index += 1
+        end
       end
     end
-  end
 
-  attr_reader :worksheet
+    attr_reader :worksheet
 
-  def repeated?
-    @x_row['number-rows-repeated']
-  end
+    def repeated?
+      @x_row['number-rows-repeated']
+    end
 
-  def [] ind
-    x_cell = @x_cell_refs[ind]
-    return nil if x_cell['number-columns-repeated'] || x_cell.children.empty?
-    x_cell.children.first.content
-  end
+    def [] ind
+      cell = @cell_refs[ind]
+      return nil if cell.no_data?
+      cell.first_p_content
+    end
 
-  def []= ind, val
+    def []= ind, val
+    end
+
   end
 
 end

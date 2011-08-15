@@ -1,4 +1,4 @@
-require 'libxml'
+require 'nokogiri'
 require 'gapped_num_hash'
 
 module Rubiod
@@ -6,6 +6,7 @@ module Rubiod
   require 'rubiod/spreadsheet'
   require 'rubiod/worksheet'
   require 'rubiod/row'
+  require 'rubiod/cell'
 
   @tmp_dir = '/tmp'
   class << self
