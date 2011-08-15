@@ -1,4 +1,4 @@
-require 'nokogiri'
+require 'libxml'
 require 'gapped_num_hash'
 
 module Rubiod

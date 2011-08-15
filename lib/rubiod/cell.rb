@@ -17,7 +17,7 @@ class Rubiod::Cell
   end
 
   def data
-    no_data? ? nil : @x_cell.first_element_child.content
+    no_data? ? nil : @x_cell.first.content
   end
 
 end

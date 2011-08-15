@@ -6,10 +6,10 @@ module Rubiod
       super
 
       @x_content = Zip::ZipFile.open(@filename) do |zip|
-        Nokogiri::XML(zip.get_input_stream('content.xml'))
+        LibXML::XML::Document.io zip.get_input_stream('content.xml')
       end
 
-      x_spread = @x_content.xpath('//office:spreadsheet').first
+      x_spread = @x_content.find_first '//office:spreadsheet'
       x_tabs_with_index = x_spread.children.each_with_index
       this = self
       @worksheets = x_tabs_with_index.inject({}) do |wss, (x_tab, i)|
