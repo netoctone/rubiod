@@ -23,10 +23,8 @@ module Rubiod
 
     attr_reader :spreadsheet
 
-    def [] row, col
-      row = @row_refs[row]
-      return nil if row.repeated?
-      row[col]
+    def [] row, col=nil
+      col.nil? ? @row_refs[row] : @row_refs[row][col]
     end
 
     def []= row, col, val

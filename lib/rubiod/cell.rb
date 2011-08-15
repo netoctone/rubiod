@@ -16,8 +16,8 @@ class Rubiod::Cell
     repeated? || @x_cell.children.empty?
   end
 
-  def first_p_content
-    @x_cell.first_element_child.content
+  def data
+    no_data? ? nil : @x_cell.first_element_child.content
   end
 
 end

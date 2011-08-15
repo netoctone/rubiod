@@ -26,8 +26,12 @@ module Rubiod
       @worksheets.each_key.reject { |k| k.kind_of? Numeric }
     end
 
-    def [] index_or_name
-      @worksheets[index_or_name]
+    def [] ws_index_or_name, *rest_indexes
+      if rest_indexes.empty?
+        @worksheets[ws_index_or_name]
+      else
+        @worksheets[ws_index_or_name][*rest_indexes]
+      end
     end
 
   end

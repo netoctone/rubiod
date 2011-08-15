@@ -29,9 +29,7 @@ module Rubiod
     end
 
     def [] ind
-      cell = @cell_refs[ind]
-      return nil if cell.no_data?
-      cell.first_p_content
+      @cell_refs[ind].data
     end
 
     def []= ind, val
