@@ -10,12 +10,12 @@ module Rubiod
       this = self
       cur_index = 0
       @x_table.children.select{ |n| n.name == 'table-row' }.each do |x_row|
-        if rep = x_row['number-rows-repeated']
-          rep = rep.to_i
-          @row_refs.insert cur_index..cur_index+rep-1, Row.new(this, x_row)
+        row = Row.new(this, x_row)
+        if rep = row.repeated?
+          @row_refs.insert cur_index..cur_index+rep-1, row
           cur_index += rep
         else
-          @row_refs.insert cur_index, Row.new(this, x_row)
+          @row_refs.insert cur_index, row
           cur_index += 1
         end
       end

@@ -10,12 +10,12 @@ module Rubiod
       this = self
       cur_index = 0
       @x_row.children.each do |x_cell|
-        if rep = x_cell['number-columns-repeated']
-          rep = rep.to_i
-          @cell_refs.insert cur_index..cur_index+rep-1, Cell.new(this, x_cell)
+        cell = Cell.new(this, x_cell)
+        if rep = cell.repeated?
+          @cell_refs.insert cur_index..cur_index+rep-1, cell
           cur_index += rep
         else
-          @cell_refs.insert cur_index, Cell.new(this, x_cell)
+          @cell_refs.insert cur_index, cell
           cur_index += 1
         end
       end
@@ -24,7 +24,8 @@ module Rubiod
     attr_reader :worksheet
 
     def repeated?
-      @x_row['number-rows-repeated']
+      rep = @x_row['number-rows-repeated']
+      rep && rep.to_i
     end
 
     def [] ind

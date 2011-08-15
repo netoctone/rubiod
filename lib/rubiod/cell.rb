@@ -8,7 +8,8 @@ class Rubiod::Cell
   attr_reader :row
 
   def repeated?
-    @x_cell['number-columns-repeated']
+    rep = @x_cell['number-columns-repeated']
+    rep && rep.to_i
   end
 
   def no_data?
