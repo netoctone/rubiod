@@ -1,4 +1,5 @@
 require 'libxml'
+require 'libxml_ruby_extensions'
 require 'gapped_num_hash'
 
 module Rubiod
