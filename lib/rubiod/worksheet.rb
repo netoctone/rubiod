@@ -31,6 +31,9 @@ module Rubiod
     end
 
     def insert row_ind
+      row = @row_refs[row_ind]
+      return nil if row.repeated?
+      @row_refs.insert_after(row_ind, row.send(:insert_after))[1]
     end
 
   end

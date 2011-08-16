@@ -3,6 +3,13 @@ class GappedNumHash
     @nums_gaps = [] # consists of: [num_or_range, val]
   end
 
+  def last_index
+    if last = @nums_gaps.last
+      num_or_range = last[0]
+      num_or_range.is_a?(Range) ? num_or_range.last : num_or_range
+    end
+  end
+
   # returns pair [num_or_range, val] or nil
   def at num
     found = find_pair
@@ -20,7 +27,26 @@ class GappedNumHash
     end
   end
 
-  # returns pair [range, val] or nil (in case of range overlaps existing)
+  # TODO: num belongs to range case
+  # returns pair [num, val]
+  def insert_after num, val
+    found = find_pair num
+    ins_ind = found[2]+1
+    pair = [num, val]
+    @nums_gaps[ins_ind...ins_ind] = [pair]
+    (ins_ind...@nums_gaps.size).each do |i|
+      pair = @nums_gaps[i]
+      num_or_range = pair[0]
+      if num_or_range.is_a? Range
+        pair[0] = num_or_range.first+1..num_or_range.last+1
+      else
+        pair[0] = num_or_range+1
+      end
+    end
+    pair
+  end
+
+  # returns pair [num_or_range, val] or nil (when range overlaps existing)
   def insert num_or_range, val
     if num_or_range.is_a? Range
       left = find_pair(num_or_range.first)
@@ -37,7 +63,7 @@ class GappedNumHash
         nil
       end
     else
-      self.[]= num_or_range, val
+      [num_or_range, self.[]=(num_or_range, val)]
     end
   end
 

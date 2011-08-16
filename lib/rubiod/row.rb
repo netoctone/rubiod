@@ -35,6 +35,28 @@ module Rubiod
     def []= ind, val
     end
 
+    def cellnum
+      @cell_refs.last_index + 1
+    end
+
+    private
+
+    def insert_after
+      x_copy = @x_row.copy true
+      x_copy.each_element do |e|
+        e.remove!
+      end
+
+      x_cell = LibXML::XML::Node.new 'table:table-cell'
+      x_cell['table:number-columns-repeated'] = cellnum.to_s
+      x_copy << x_cell
+
+      x_copy_doc = LibXML::XML::Document.string x_copy.to_s :indent => false
+      @x_row.next = @x_row.doc.import x_copy_doc.root
+
+      Row.new(@worksheet, @x_row.next)
+    end
+
   end
 
 end
