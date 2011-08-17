@@ -12,7 +12,7 @@ class GappedNumHash
 
   # returns pair [num_or_range, val] or nil
   def at num
-    found = find_pair
+    found = find_pair num
     found[0] && [found[0], found[1]]
   end
 
@@ -44,6 +44,28 @@ class GappedNumHash
       end
     end
     pair
+  end
+
+  # num must belong to range
+  # val_hash - { :left => smth, :mid => smth, :right => smth }
+  def insert_split num, val_hash
+    old_range, old_val, ind = find_pair(num)
+    raise ArgumentError unless old_range.is_a? Range
+    new_pairs = []
+    left_range_size = num - old_range.first
+    if left_range_size == 1
+      new_pairs << [old_range.first, val_hash[:left]]
+    elsif left_range_size > 1
+      new_pairs << [old_range.first..ind-1, val_hash[:left]]
+    end
+    new_pairs << [num, val_hash[:mid]]
+    right_range_size = old_range.last - num
+    if right_range_size == 1
+      new_pairs << [old_range.last, val_hash[:right]]
+    elsif right_range_size > 1
+      new_pairs << [ind+1..old_range.last, val_hash[:right]]
+    end
+    @nums_gaps[ind..ind] = new_pairs
   end
 
   # returns pair [num_or_range, val] or nil (when range overlaps existing)
@@ -81,22 +103,7 @@ class GappedNumHash
     when Numeric
       @nums_gaps[found[2]] = val
     when Range
-      old_range, old_val, ind = found
-      new_pairs = []
-      left_range_size = num - old_range.first
-      if left_range_size == 1
-        new_pairs << [old_range.first, old_val]
-      elsif left_range_size > 1
-        new_pairs << [old_range.first..ind-1, old_val]
-      end
-      new_pairs << [num, val]
-      right_range_size = old_range.last - num
-      if right_range_size == 1
-        new_pairs << [old_range.last, old_val]
-      elsif right_range_size > 1
-        new_pairs << [ind+1..old_range.last, old_val]
-      end
-      @nums_gaps[ind..ind] = new_pairs
+      insert_split num, { :left => found[1], :mid => val, :right => found[1] }
       val
     when nil
       @nums_gaps[found[1]...found[1]] = [[num, val]]

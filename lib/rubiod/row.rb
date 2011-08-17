@@ -33,6 +33,14 @@ module Rubiod
     end
 
     def []= ind, val
+      num_or_range, cell = @cell_refs.at ind
+      if num_or_range.is_a? Range
+        cells = cell.send :insert_split, ind-num_or_range.first, val
+        @cell_refs.insert_split ind, cells
+        val
+      else
+        cell.set_data val
+      end
     end
 
     def cellnum
@@ -42,13 +50,9 @@ module Rubiod
     private
 
     def insert_after
-      x_copy = @x_row.copy_with_attrs
-
-      x_cell = LibXML::XML::Node.new 'table:table-cell'
-      x_cell['table:number-columns-repeated'] = cellnum.to_s
-      x_copy << x_cell
-
-      @x_row.next = @x_row.doc.import x_copy
+      @x_row.next = @x_row.ns_copy_with_attrs << @x_row.doc.ns_create_node(
+        'table:table-cell', nil, 'table:number-columns-repeated' => cellnum
+      )
 
       Row.new(@worksheet, @x_row.next)
     end
