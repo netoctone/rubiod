@@ -56,14 +56,14 @@ class GappedNumHash
     if left_range_size == 1
       new_pairs << [old_range.first, val_hash[:left]]
     elsif left_range_size > 1
-      new_pairs << [old_range.first..ind-1, val_hash[:left]]
+      new_pairs << [old_range.first..num-1, val_hash[:left]]
     end
     new_pairs << [num, val_hash[:mid]]
     right_range_size = old_range.last - num
     if right_range_size == 1
       new_pairs << [old_range.last, val_hash[:right]]
     elsif right_range_size > 1
-      new_pairs << [ind+1..old_range.last, val_hash[:right]]
+      new_pairs << [num+1..old_range.last, val_hash[:right]]
     end
     @nums_gaps[ind..ind] = new_pairs
   end
