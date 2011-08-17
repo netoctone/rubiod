@@ -32,18 +32,16 @@ class Rubiod::Cell
   private
 
   # cell must be 'repeated?'
-  def insert_split left_rep, data
-    right_rep = repeated? - left_rep - 1
-
-    left = if left_rep > 0
-      @x_cell.prev = if left_rep > 1 then repeat_x left_rep else empty_x end
+  def insert_split left_repeated, data
+    if left = create_empty_x(left_repeated)
+      @x_cell.prev = left
     end
 
-    set_data data
-
-    right = if right_rep > 0
-      @x_cell.next = if right_rep > 1 then repeat_x right_rep else empty_x end
+    if right = create_empty_x(repeated? - left_repeated - 1)
+      @x_cell.next = right
     end
+
+    set_data data # mutator
 
     {
       :left => Rubiod::Cell.new(@row, left),
@@ -52,15 +50,23 @@ class Rubiod::Cell
     }
   end
 
-  private
+  def create_empty_x count
+    if count > 0
+      if count > 1
+        create_repeated_x count
+      else
+        create_single_x
+      end
+    end
+  end
 
-  def repeat_x num
+  def create_repeated_x count
     @x_cell.doc.ns_create_node 'table:table-cell', nil, {
-      'table:number-columns-repeated' => num
+      'table:number-columns-repeated' => count
     }
   end
 
-  def empty_x
+  def create_single_x
     @x_cell.doc.ns_create_node 'table:table-cell'
   end
 
