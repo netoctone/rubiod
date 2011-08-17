@@ -34,6 +34,10 @@ module Rubiod
       end
     end
 
+    def []= ws_index_or_name, row, col, val
+      @worksheets[ws_index_or_name][row, col] = val
+    end
+
   end
 
 end

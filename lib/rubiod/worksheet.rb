@@ -28,6 +28,9 @@ module Rubiod
     end
 
     def []= row, col, val
+      rw = @row_refs[row]
+      return nil if rw.nil? || rw.repeated? # not to leave in future
+      rw[col] = val
     end
 
     def insert row_ind
