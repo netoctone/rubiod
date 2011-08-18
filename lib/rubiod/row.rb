@@ -9,7 +9,7 @@ module Rubiod
       @cell_refs = GappedNumHash.new
       this = self
       cur_index = 0
-      @x_row.children.each do |x_cell|
+      @x_row.each_element do |x_cell|
         cell = Cell.new(this, x_cell)
         if rep = cell.repeated?
           @cell_refs.insert cur_index..cur_index+rep-1, cell
@@ -33,9 +33,9 @@ module Rubiod
     end
 
     def []= ind, val
-      num_or_range, cell = @cell_refs.at ind
-      if num_or_range.is_a? Range
-        cells = cell.send :insert_split, ind-num_or_range.first, val
+      key, cell = @cell_refs.at ind
+      unless key.atom?
+        cells = cell.send :insert_split, ind-key.first, val
         @cell_refs.insert_split ind, cells
         val
       else
