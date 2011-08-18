@@ -1,6 +1,6 @@
 class GappedNumHash
   def initialize
-    @nums_gaps = [] # consists of: [num_or_range, val]
+    @nums_gaps = [] # consists of: [key, val]
   end
 
   def each &block
@@ -12,13 +12,13 @@ class GappedNumHash
     last[0].last if last
   end
 
-  # returns pair [num_or_range, val] or nil
+  # returns pair [key, val] or nil
   def at num
     found = find_pair num
     found[0] && [found[0], found[1]]
   end
 
-  # returns pair [num_or_range, val] or nil
+  # returns pair [key, val] or nil
   def delete_at num
     found = find_pair num
     if found[0]
@@ -29,10 +29,13 @@ class GappedNumHash
     end
   end
 
-  # TODO: case when num belongs to gap with width > 1
-  # returns pair [num, val]
+  # num must belong to atom key
+  # returns pair [key, val]
   def insert_after num, val
-    ins_ind = find_pair(num)[2] + 1
+    f = find_pair num
+    raise ArgumentError unless f[0].atom?
+
+    ins_ind = f[2] + 1
     pair = [num..num, val]
     @nums_gaps[ins_ind...ins_ind] = [pair]
     (ins_ind...@nums_gaps.size).each do |i|
@@ -42,7 +45,7 @@ class GappedNumHash
     pair
   end
 
-  # num must belong to gap with width > 1
+  # num must belong non-atom key
   # val_hash - { :left => smth, :mid => smth, :right => smth }
   def insert_split num, val_hash
     key, old_val, ind = find_pair(num)
@@ -56,7 +59,7 @@ class GappedNumHash
     @nums_gaps[ind..ind] = new_pairs
   end
 
-  # returns pair [num_or_range, val] or nil (when range overlaps existing)
+  # returns pair [key, val] or nil (when new key overlaps existing ones)
   def insert num_or_range, val
     key = Range(num_or_range)
     unless key.atom?
@@ -83,7 +86,7 @@ class GappedNumHash
     found[0] && found[1]
   end
 
-  # gap will be splitted
+  # may cause splitting
   # returns val
   def []= num, val
     f = find_pair num
