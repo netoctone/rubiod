@@ -20,6 +20,18 @@ module Rubiod
       end
     end
 
+    def save path=nil
+      if path
+        return nil # to implement
+      else
+        Zip::ZipFile.open(@filename) do |zip|
+          zip.get_output_stream('content.xml') do |f|
+            f.write @x_content
+          end
+        end
+      end
+    end
+
     attr_reader :worksheets
 
     def worksheet_names
