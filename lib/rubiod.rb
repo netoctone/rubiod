@@ -5,6 +5,7 @@ require 'libxml'
 require 'libxml_extensions'
 
 require 'zip/zipfilesystem'
+require 'fileutils'
 
 module Rubiod
   require 'rubiod/document'

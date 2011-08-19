@@ -21,13 +21,10 @@ module Rubiod
     end
 
     def save path=nil
-      if path
-        return nil # to implement
-      else
-        Zip::ZipFile.open(@filename) do |zip|
-          zip.get_output_stream('content.xml') do |f|
-            f.write @x_content
-          end
+      FileUtils.cp(@filename, path) if path
+      Zip::ZipFile.open(path || @filename) do |zip|
+        zip.get_output_stream('content.xml') do |f|
+          f.write @x_content
         end
       end
     end
