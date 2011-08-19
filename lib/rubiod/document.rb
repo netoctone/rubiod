@@ -1,5 +1,3 @@
-require 'zip/zipfilesystem'
-
 class Rubiod::Document
 
   def initialize string_or_io

@@ -1,6 +1,7 @@
 require 'libxml'
 require 'libxml_ruby_extensions'
 require 'gapped_num_hash'
+require 'zip/zipfilesystem'
 
 module Rubiod
   require 'rubiod/document'

@@ -21,4 +21,5 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
 
   s.add_dependency 'libxml-ruby', '~> 2.0'
+  s.add_dependency 'rubyzip', '~> 0.9.4'
 end
