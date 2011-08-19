@@ -5,13 +5,14 @@ For now it supports some functionality to read/modify OD spreadsheets (.ods).
 == Download and installation
 
 At least two ways available:
-(1) Build gem from source:
+
+1. Build gem from source:
 
     git clone git://github.com/netoctone/rubiod.git; cd rubiod
     gem build rubiod.gemspec
     gem install rubiod-version.gem
 
-(2) Or add following line to Gemfile (if it's in use):
+2. Or add following line to Gemfile (if it's in use):
 
     gem 'rubiod', :git => 'git://github.com/netoctone/rubiod.git'
 
