@@ -15,8 +15,20 @@ class LibXML::XML::Node
   end
 
   def ns_set_attr name_with_opt_prefix, val
-    ns_and_name = ns_parse_name name_with_opt_prefix
-    LibXML::XML::Attr.ns_new self, ns_and_name[1], val, ns_and_name[0]
+    ns, name = ns_parse_name name_with_opt_prefix
+    LibXML::XML::Attr.ns_new self, name, val, ns
+    self
+  end
+
+  def ns_remove_attr name_with_opt_prefix
+    ns, name = ns_parse_name name_with_opt_prefix
+    if ns
+      attr = attributes.get_attribute_ns ns.href, name
+      attr.ns_remove! if attr
+    else
+      attr = attributes.get_attribute name
+      attr.ns_remove! if attr && attr.ns.nil?
+    end
   end
 
   def ns_parse_name name_with_opt_prefix
@@ -25,11 +37,17 @@ class LibXML::XML::Node
     ns_and_name[0] = namespaces.find_by_prefix ns_and_name[0]
     ns_and_name
   end
+
+  def ns_elements
+    elems = []
+    each_element { |e| elems << e }
+    elems
+  end
 end
 
 class LibXML::XML::Attr
   def self.ns_new node, name, val, ns_or_prefix=nil
-    attr = new node, name, val
+    attr = new node, name, val.to_s
     if ns_or_prefix
       attr.namespaces.namespace = if ns_or_prefix.is_a? String
         node.namespaces.find_by_prefix ns_or_prefix
@@ -39,17 +57,23 @@ class LibXML::XML::Attr
     end
     attr
   end
+
+  def ns_remove!
+    val = value
+    remove!
+    val
+  end
 end
 
 class LibXML::XML::Document
   def ns_create_node name_with_opt_prefix, content=nil, attr_hash=nil
-    ns_and_name = root.ns_parse_name name_with_opt_prefix
-    node = LibXML::XML::Node.new ns_and_name[1], content, ns_and_name[0]
+    ns, name = root.ns_parse_name name_with_opt_prefix
+    node = LibXML::XML::Node.new name, content && content.to_s, ns
 
     if attr_hash
       attr_hash.each do |name_with_opt_prefix, val|
-        ns_and_name = root.ns_parse_name name_with_opt_prefix
-        LibXML::XML::Attr.ns_new node, ns_and_name[1], val.to_s, ns_and_name[0]
+        ns, name = root.ns_parse_name name_with_opt_prefix
+        LibXML::XML::Attr.ns_new node, name, val, ns
       end
     end
 
