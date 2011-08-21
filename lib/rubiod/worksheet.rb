@@ -9,7 +9,7 @@ module Rubiod
       @row_refs = GappedNumHash.new
       this = self
       cur_index = 0
-      @x_table.children.select{ |n| n.name == 'table-row' }.each do |x_row|
+      @x_table.ns_elements.select{ |n| n.name == 'table-row' }.each do |x_row|
         row = Row.new(this, x_row)
         if rep = row.repeated?
           @row_refs.insert cur_index..cur_index+rep-1, row
@@ -29,14 +29,35 @@ module Rubiod
 
     def []= row, col, val
       rw = @row_refs[row]
-      return nil if rw.nil? || rw.repeated? # not to leave in future
+      return if rw.nil? || rw.repeated? # not to leave (repeated)
       rw[col] = val
     end
 
+    # inserts a row after specified, copying last's formatting
+    # return new row or nil
     def insert row_ind
       row = @row_refs[row_ind]
-      return nil if row.repeated?
+      return if row.nil? || row.repeated?
       @row_refs.insert_after(row_ind, row.send(:insert_after))[1]
+    end
+
+    # deletes specified row
+    # returns self or nil
+    def delete row_ind
+      key, row = @row_refs.at row_ind
+      return unless key
+
+      if key.atom?
+        if @row_refs.delete row_ind
+          row.send :remove!
+          self
+        end
+      else
+        if row.send :reduce_repeated
+          @row_refs.taper row_ind
+          self
+        end
+      end
     end
 
   end

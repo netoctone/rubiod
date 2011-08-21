@@ -29,25 +29,44 @@ module Rubiod
     end
 
     def [] ind
-      @cell_refs[ind].data
+      cell = @cell_refs[ind]
+      cell && cell.data
     end
 
     def []= ind, val
       key, cell = @cell_refs.at ind
-      unless key.atom?
+      return unless key # TODO: not to leave
+      if key.atom?
+        cell.set_data val
+      else
         cells = cell.send :insert_split, ind-key.first, val
         @cell_refs.insert_split ind, cells
         val
-      else
-        cell.set_data val
       end
     end
 
     def cellnum
-      @cell_refs.last_index + 1
+      if ind = @cell_refs.last_index then ind+1 else 0 end
     end
 
     private
+
+    def remove!
+      @x_row.remove!
+    end
+
+    # returns self or nil
+    def reduce_repeated
+      rep = repeated?
+      return unless rep && rep > 1
+
+      @x_row.ns_remove_attr 'table:number-rows-repeated'
+      if rep > 2
+        @x_row.ns_set_attr 'table:number-rows-repeated', rep-1
+      end
+
+      self
+    end
 
     def insert_after
       @x_row.next = @x_row.ns_copy_with_attrs
@@ -74,6 +93,8 @@ module Rubiod
       opts[:repeated] = repeated if repeated > 1
 
       @x_row.next << Cell.send(:new_empty_x, @x_row.doc, opts)
+
+      self
     end
 
   end

@@ -43,18 +43,18 @@ module Rubiod
     end
 
     def no_data?
-      repeated? || @x_cell.children.empty?
+      repeated? || @x_cell.ns_elements.empty?
     end
 
     def data
-      no_data? ? nil : @x_cell.first.content
+      no_data? ? nil : @x_cell.ns_elements.first.content # TODO: improve
     end
 
     # TODO: maybe, remove only value-type and value
     # removes all current attributes (except style-name) and content
     def set_data data
       @x_cell.each_attr do |a|
-        a.remove! unless a.name == 'style-name'
+        a.remove! unless a.name == 'style-name' # TODO: ns equality check
       end
       @x_cell.each &:remove!
       @x_cell.ns_set_attr 'office:value-type', 'string'

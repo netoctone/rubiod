@@ -10,7 +10,7 @@ module Rubiod
       end
 
       x_spread = @x_content.find_first '//office:spreadsheet'
-      x_tabs_with_index = x_spread.children.each_with_index
+      x_tabs_with_index = x_spread.ns_elements.each_with_index
       this = self
       @worksheets = x_tabs_with_index.inject({}) do |wss, (x_tab, i)|
         ws = Worksheet.new(this, x_tab)
@@ -32,7 +32,7 @@ module Rubiod
     attr_reader :worksheets
 
     def worksheet_names
-      @worksheets.each_key.reject { |k| k.kind_of? Numeric }
+      @worksheets.keys.reject { |k| k.kind_of? Numeric }
     end
 
     def [] ws_index_or_name, *rest_indexes
