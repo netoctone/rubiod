@@ -11,9 +11,8 @@ module Rubiod
 
       x_spread = @x_content.find_first '//office:spreadsheet'
       x_tabs_with_index = x_spread.ns_elements.each_with_index
-      this = self
       @worksheets = x_tabs_with_index.inject({}) do |wss, (x_tab, i)|
-        ws = Worksheet.new(this, x_tab)
+        ws = Worksheet.new(self, x_tab)
         wss[x_tab['name']] = ws
         wss[i] = ws
         wss

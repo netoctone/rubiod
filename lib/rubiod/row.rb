@@ -7,10 +7,9 @@ module Rubiod
       @x_row = x_row
 
       @cell_refs = GappedNumHash.new
-      this = self
       cur_index = 0
       @x_row.each_element do |x_cell|
-        cell = Cell.new(this, x_cell)
+        cell = Cell.new(self, x_cell)
         if rep = cell.repeated?
           @cell_refs.insert cur_index..cur_index+rep-1, cell
           cur_index += rep
