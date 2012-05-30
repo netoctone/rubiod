@@ -1,8 +1,15 @@
-== RubiOD - work with OpenDocument.
+= RubiOD - work with OpenDocument
 
+The +rubiod+ gem is intended to provide cute ruby-style interface to work
+with OASIS Open Document Format files.
 For now it supports some functionality to read/modify OD spreadsheets (.ods).
 
-== Download and installation
+= Requirements
+
++rubiod+ works with ruby 1.8.7 or higher.
+It is dependent on +libxml-ruby+ and +rubyzip+ gems
+
+= Download and installation
 
 At least two ways available:
 
@@ -16,6 +23,62 @@ At least two ways available:
 
     gem 'rubiod', :git => 'git://github.com/netoctone/rubiod.git'
 
-== License
+= ODS Showcase
+
+Some examples of work with +rubiod+
+
+== Load +rubiod+ itself
+
+  require 'rubygems'
+  require 'rubiod'
+
+== Load spreadsheet
+
+Document initializer takes a path to file or any IO object
+
+  spread = Rubiod::Spreadsheet.new('path/to/file.ods')
+
+  File.open('path/to/file.ods', 'r') do |f|
+    Rubiod::Spreadsheet.new(f)
+  end
+
+== Extract document parts
+
+RubiOD allows to work separately with worksheets and rows of document:
+
+  worksheet = spread['Worksheet']
+  worksheet = spread[0]
+
+  row = spread[0, 10]
+
+  row = worksheet[10]
+
+== Read data
+
+  puts spread['Worksheet', 0, 0]
+  puts worksheet[0, 0]
+  puts row[0]
+
+== Modify data
+
+Setting new value in a cell:
+
+  spread[0, 1, 5] = 'new data'
+  worksheet[1, 5] = 10
+  row[5] = object
+
+Inserting new row after specified one, applying the same formatting:
+
+  worksheet.insert 10
+
+Deleting an entire row (with shifting lower ones up):
+
+  worksheet.delete 11
+
+== Apply modifications
+
+  spread.save
+
+= License
 
 RubiOD is released under the MIT license.
