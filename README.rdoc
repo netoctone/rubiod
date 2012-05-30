@@ -1,4 +1,4 @@
-= RubiOD - work with OpenDocument
+= RubiOD - work with OpenDocument in pure Ruby
 
 The +rubiod+ gem is intended to provide cute ruby-style interface to work
 with OASIS Open Document Format files.
